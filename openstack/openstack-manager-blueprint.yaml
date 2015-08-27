@@ -350,7 +350,7 @@ node_templates:
           # according to the below configuration. Each request received by the
           # REST service will be authenticated, and communication can be limited
           # to SSL.
-          enabled: false
+          enabled: true
 
           #########################################################################
           # A list of one or more authentication providers. Cloudify will use
@@ -397,11 +397,11 @@ node_templates:
 
           #########################################################################
           # REST calls to "MANAGER_IP/tokens" will generate and return
-          # authentication tokens if an auth_token_generator is set (Optional).
+          # authentication tokens if an security_auth_token_generator is set (Optional).
           # The below configuration sets Flask_secuREST's token module as the
           # token generator.
           # ** Note: Set the same secret key as in your token authenticator
-          auth_token_generator:
+          security_auth_token_generator:
             implementation: flask_securest.authentication_providers.token:TokenAuthenticator
             properties:
               secret_key: my_secret

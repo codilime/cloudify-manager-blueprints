@@ -19,6 +19,11 @@ export SSL_CERTS_ROOT="/root/cloudify"
 # this is propagated to the agent retrieval script later on so that it's not defined twice.
 ctx instance runtime_properties agent_packages_path "${MANAGER_AGENTS_PATH}"
 
+# TODO can we use static (not runtime) attributes for some of these? how to set them?
+ctx instance runtime_properties default_rest_service_port "8100"
+ctx instance runtime_properties ssl_rest_service_port "443"
+ctx instance runtime_properties internal_rest_service_port "8101"
+ctx instance runtime_properties rest_endpoints_regex "(blueprints|executions|deployments|nodes|events|search|status|provider|api|node-instances|version|evaluate|deployment-modifications|tokens)"
 
 ctx logger info "Installing Nginx..."
 

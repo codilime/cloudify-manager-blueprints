@@ -3,6 +3,7 @@
 . $(ctx download-resource "components/utils")
 
 
+export NODE_PROPERTIES=$(ctx node properties)
 export CELERY_VERSION=$(ctx node properties celery_version)  # (e.g. 3.1.17)
 export REST_CLIENT_SOURCE_URL=$(ctx node properties rest_client_module_source_url)  # (e.g. "https://github.com/cloudify-cosmo/cloudify-rest-client/archive/3.2.zip")
 export PLUGINS_COMMON_SOURCE_URL=$(ctx node properties plugins_common_module_source_url)  # (e.g. "https://github.com/cloudify-cosmo/cloudify-plugins-common/archive/3.2.zip")
@@ -18,6 +19,8 @@ export VIRTUALENV_DIR="${MGMTWORKER_HOME}/env"
 export CELERY_WORK_DIR="${MGMTWORKER_HOME}/work"
 export CELERY_LOG_DIR="/var/log/cloudify/mgmtworker"
 
+
+ctx logger info "${NODE_PROPERTIES}"
 
 ctx logger info "Installing Management Worker..."
 
