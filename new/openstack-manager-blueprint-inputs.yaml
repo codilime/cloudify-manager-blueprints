@@ -72,6 +72,12 @@
 # Cloudify Modules
 #############################
 
+#rest_service_rpm_url:
+#management_worker_rpm_source_url:
+#amqpinflux_rpm_source_url:
+
+# For development purposes, you can use these, which will override the modules
+# supplied within the rpm.
 # These should be pip installable tar.gz files.
 #rest_client_source_url: ''
 #dsl_parser_source_url: ''
@@ -116,6 +122,7 @@
 # Elasticsearch Inputs
 #############################
 #elasticsearch_source_url: ''
+#elasticsearch_curator_rpm_source_url: ''
 
 # https://www.elastic.co/guide/en/elasticsearch/guide/current/heap-sizing.html
 #elasticsearch_heap_size:

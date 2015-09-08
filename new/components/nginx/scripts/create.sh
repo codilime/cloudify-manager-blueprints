@@ -63,10 +63,4 @@ ctx logger info "Copying SSL Certs..."
 deploy_blueprint_resource "${CONFIG_REL_PATH}/ssl/server.crt" "${SSL_CERTS_ROOT}/server.crt"
 deploy_blueprint_resource "${CONFIG_REL_PATH}/ssl/server.key" "${SSL_CERTS_ROOT}/server.key"
 
-ctx logger info "Deploying Required Manager Resources..."
-manager_repo=$(download_file ${REST_SERVICE_SOURCE_URL})
-ctx logger info "Extracting Manager Resources to ${MANAGER_RESOURCES_HOME}..."
-tar -xzf ${manager_repo} --strip-components=1 -C "/tmp" >/dev/null
-sudo cp -R "/tmp/resources/rest-service/cloudify/" "${MANAGER_RESOURCES_HOME}"
-
 sudo systemctl enable nginx.service &>/dev/null

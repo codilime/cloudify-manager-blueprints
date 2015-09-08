@@ -139,9 +139,12 @@ node_types:
     derived_from: cloudify.nodes.DBMS
     properties:
       es_rpm_source_url:
-        description: Elasticsearch tar.gz Source URL
+        description: Elasticsearch RPM Source URL
         type: string
         default: { get_input: elasticsearch_source_url }
+      es_curator_rpm_source_url:
+        description: Elasticsearch Curator RPM Source URL
+        default: { get_input: elasticsearch_curator_rpm_source_url}
       es_heap_size:
         description: >
           This is crucial when scaling up as it
@@ -297,6 +300,9 @@ node_types:
   manager.nodes.RestService:
     derived_from: cloudify.nodes.ApplicationModule
     properties:
+      rest_service_rpm_source_url:
+        type: string
+        default: { get_input: rest_service_rpm_source_url }
       dsl_parser_module_source_url:
         description: DSL Parser module Source URL
         type: string
@@ -347,10 +353,10 @@ node_types:
   manager.nodes.ManagementWorker:
     derived_from: cloudify.nodes.ApplicationModule
     properties:
-      celery_version:
-        description: Celery version to use
+      management_worker_rpm_source_url:
+        description: Management Worker RPM Source URL
         type: string
-        default: 3.1.17
+        default: { get_input: management_worker_rpm_source_url }
       rest_client_module_source_url:
         description: REST Client module Source URL
         type: string
@@ -393,6 +399,10 @@ node_types:
   manager.nodes.AmqpInfluxBroker:
     derived_from: cloudify.nodes.ApplicationModule
     properties:
+      amqpinflux_rpm_source_url:
+        description: AMQP to InfluxDB Broker RPM Source URL
+        type: string
+        default: { get_input: amqpinflux_rpm_source_url }
       amqpinflux_module_source_url:
         description: AMQP to InfluxDB Broker Source URL
         type: string
