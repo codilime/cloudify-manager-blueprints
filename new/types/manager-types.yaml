@@ -278,10 +278,10 @@ node_types:
         description: Riemann RPM Source URL
         type: string
         default: { get_input: riemann_source_url }
-      rest_service_module_source_url:
+      cloudify_resources_url:
         description: REST Service module Source URL
         type: string
-        default: { get_input: rest_service_source_url }
+        default: { get_input: cloudify_resources_url }
     interfaces:
       cloudify.interfaces.lifecycle:
         create:
