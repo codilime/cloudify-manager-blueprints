@@ -3,6 +3,7 @@
 . $(ctx download-resource "components/utils")
 
 CONFIG_REL_PATH="components/nginx/config"
+SSL_RESOURCES_REL_PATH="resources/ssl"
 
 export NGINX_SOURCE_URL=$(ctx node properties nginx_rpm_source_url)  # (e.g. "https://dl.dropboxusercontent.com/u/407576/3.2/nginx-1.8.0-1.el7.ngx.x86_64.rpm")
 export REST_SERVICE_SOURCE_URL=$(ctx node properties rest_service_module_source_url)  # (e.g. "https://github.com/cloudify-cosmo/cloudify-manager/archive/3.2.tar.gz")
@@ -19,8 +20,13 @@ export SSL_CERTS_ROOT="/root/cloudify"
 # this is propagated to the agent retrieval script later on so that it's not defined twice.
 ctx instance runtime_properties agent_packages_path "${MANAGER_AGENTS_PATH}"
 
+# TODO can we use static (not runtime) attributes for some of these? how to set them?
+ctx instance runtime_properties default_rest_service_port "8100"
+ctx instance runtime_properties ssl_rest_service_port "443"
+ctx instance runtime_properties internal_rest_service_port "8101"
 
 ctx logger info "Installing Nginx..."
+set_selinux_permissive
 
 copy_notice "nginx"
 create_dir ${NGINX_LOG_PATH}
@@ -60,13 +66,7 @@ sudo chmod 644 $lconf
 
 
 ctx logger info "Copying SSL Certs..."
-deploy_blueprint_resource "${CONFIG_REL_PATH}/ssl/server.crt" "${SSL_CERTS_ROOT}/server.crt"
-deploy_blueprint_resource "${CONFIG_REL_PATH}/ssl/server.key" "${SSL_CERTS_ROOT}/server.key"
-
-ctx logger info "Deploying Required Manager Resources..."
-manager_repo=$(download_file ${REST_SERVICE_SOURCE_URL})
-ctx logger info "Extracting Manager Resources to ${MANAGER_RESOURCES_HOME}..."
-tar -xzf ${manager_repo} --strip-components=1 -C "/tmp" >/dev/null
-sudo cp -R "/tmp/resources/rest-service/cloudify/" "${MANAGER_RESOURCES_HOME}"
+deploy_blueprint_resource "${SSL_RESOURCES_REL_PATH}/server.crt" "${SSL_CERTS_ROOT}/server.crt"
+deploy_blueprint_resource "${SSL_RESOURCES_REL_PATH}/server.key" "${SSL_CERTS_ROOT}/server.key"
 
 sudo systemctl enable nginx.service &>/dev/null
