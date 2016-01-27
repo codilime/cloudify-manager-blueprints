@@ -472,6 +472,11 @@ function deploy_ssl_certificate () {
   # Root owner, with permissions set below, allow anyone to read a public cert, and allow the owner to read a private cert, but not change it, mitigating risk in the event of the associated service being vulnerable.
   ownership=root.${group}
 
+  ctx logger info "THIS IS deploy_ssl_certificate"
+  ctx logger info "THE CERT:"
+  ctx logger info "Cert file name: ${cert}"
+  ctx logger info "END OF CERT"
+
   if [[ ${private_or_public} == "private" ]]; then
     # This check should probably be done using an openssl command
     if [[ "${cert}" =~ "PRIVATE KEY" ]]; then

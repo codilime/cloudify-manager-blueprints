@@ -601,6 +601,7 @@ node_templates:
     properties:
       resource_id: { get_input: management_subnet_name }
       subnet:
+        dns_nameservers: [8.8.4.4, 8.8.8.8]
         ip_version: 4
         cidr: 10.67.79.0/24
       openstack_config: *openstack_configuration
