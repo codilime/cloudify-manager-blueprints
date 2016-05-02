@@ -14,7 +14,11 @@ ExecStart=/bin/sh -c '/opt/manager/env/bin/gunicorn \
     -b 0.0.0.0:${REST_SERVICE_PORT} \
     --timeout 300 manager_rest.server:app \
     --log-file /var/log/cloudify/rest/gunicorn.log \
-    --access-logfile /var/log/cloudify/rest/gunicorn-access.log'
+    --access-logfile /var/log/cloudify/rest/gunicorn-access.log' \
+    --keep-alive 5 \
+    -k sync \
+    --worker-connections 4 \
+    --threads 2
 
 [Install]
 WantedBy=multi-user.target
