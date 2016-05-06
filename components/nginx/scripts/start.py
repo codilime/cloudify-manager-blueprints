@@ -30,7 +30,6 @@ def is_nginx_responding(url):
 ctx.logger.info('Starting Nginx Service...')
 utils.start_service(NGINX_SERVICE_NAME, append_prefix=False)
 
-
 if utils.systemd.is_alive(NGINX_SERVICE_NAME, append_prefix=False):
     ctx.logger.info('Nginx service is running')
 else:

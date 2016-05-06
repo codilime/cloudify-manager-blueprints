@@ -41,7 +41,6 @@ def is_elasticsearch_responding(url):
 if not ES_ENDPOINT_IP:
     ctx.logger.info('Starting Elasticsearch Service...')
     utils.start_service(ES_SERVICE_NAME, append_prefix=False)
-
     ES_ENDPOINT_IP = '127.0.0.1'
     if utils.systemd.is_alive(ES_SERVICE_NAME):
         ctx.logger.info('Elasticsearch service is running')
