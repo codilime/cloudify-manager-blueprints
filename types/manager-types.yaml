@@ -285,6 +285,14 @@ node_types:
               default: components/rabbitmq/scripts/stop.py
             fabric_env: *simple_fabric_env
 
+      cloudify.interfaces.sanitycheck:
+        postinstall:
+          implementation: fabric.fabric_plugin.tasks.run_script
+          inputs:
+            script_path:
+              default: components/checks/rabbitmq_check.py
+            fabric_env: *simple_fabric_env
+
   manager.nodes.Elasticsearch:
     derived_from: cloudify.nodes.DBMS
     properties:

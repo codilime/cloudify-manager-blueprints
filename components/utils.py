@@ -417,7 +417,7 @@ class SystemD(object):
         systemctl_cmd = ['systemctl', action]
         if service:
             systemctl_cmd.append(service)
-        sudo(systemctl_cmd, retries=retries, ignore_failures=ignore_failure)
+        return sudo(systemctl_cmd, retries=retries, ignore_failures=ignore_failure)
 
     def configure(self, service_name, render=True):
         """This configures systemd for a specific service.
@@ -490,6 +490,11 @@ class SystemD(object):
                                                         append_prefix)
         self.systemctl('restart', full_service_name, retries,
                        ignore_failure=ignore_failure)
+
+    def is_alive(self, service_name, append_prefix=True):
+        service_name = self._get_full_service_name(service_name, append_prefix)
+        result = self.systemctl('status', service_name, ignore_failure=True)
+        return result.returncode == 0
 
     @staticmethod
     def _get_full_service_name(service_name, append_prefix):
