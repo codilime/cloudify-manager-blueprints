@@ -725,3 +725,8 @@ plugins:
 outputs:
   manager_ip:
     value: { get_property: [manager_host, public_ip] }
+
+
+workflows:
+  sanitycheck: default_workflows.cloudify.plugins.workflows.sanitycheck
+
