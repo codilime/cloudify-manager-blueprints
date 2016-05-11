@@ -3,6 +3,7 @@
 import time
 import json
 from os.path import join, dirname
+import socket
 
 from cloudify import ctx
 
@@ -12,7 +13,7 @@ ctx.download_resource(
 import utils  # NOQA
 
 RABBITMQ_SERVICE_NAME = 'rabbitmq'
-
+PORT = 5672
 
 ctx_properties = utils.ctx_factory.create(RABBITMQ_SERVICE_NAME,
                                           write_to_file=False)
@@ -94,3 +95,25 @@ if not rabbitmq_endpoint_ip:
     # rabbitmq restart exits with 143 status code that is valid in this case.
     utils.start_service_and_archive_properties(RABBITMQ_SERVICE_NAME,
                                                ignore_restart_fail=True)
+    rabbitmq_endpoint_ip = '127.0.0.1'
+
+    if utils.systemd.is_alive(RABBITMQ_SERVICE_NAME):
+        ctx.logger.info('RabbitMQ service is running')
+    else:
+        ctx.logger.info('RabbitMQ service is not running')
+
+
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+try:
+    sock.connect((rabbitmq_endpoint_ip, PORT))
+except socket.error as e:
+    ctx.logger.error(
+        'RabbitMQ was not listening on {}:{}: {}'.format(rabbitmq_endpoint_ip,
+                                                         PORT, e))
+else:
+    ctx.logger.info(
+        'RabbitMQ was listening on {}:{}'.format(rabbitmq_endpoint_ip, PORT))
+    sock.shutdown(socket.SHUT_RDWR)
+finally:
+    sock.close()
