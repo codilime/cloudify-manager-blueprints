@@ -14,3 +14,8 @@ RIEMANN_SERVICE_NAME = 'riemann'
 
 ctx.logger.info('Starting Riemann Service...')
 utils.start_service_and_archive_properties(RIEMANN_SERVICE_NAME)
+
+if utils.systemd.is_alive(RIEMANN_SERVICE_NAME):
+    ctx.logger.info('Riemann service is running')
+else:
+    ctx.logger.error('Riemann service is not running')
