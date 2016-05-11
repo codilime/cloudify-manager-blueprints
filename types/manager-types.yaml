@@ -198,6 +198,12 @@ node_types:
             script_path:
               default: components/java/scripts/create.py
             fabric_env: *simple_fabric_env
+        start:
+          implementation: fabric.fabric_plugin.tasks.run_script
+          inputs:
+            script_path:
+              default: components/java/scripts/start.py
+            fabric_env: *simple_fabric_env
 
   manager.nodes.RabbitMQ:
     derived_from: cloudify.nodes.MessageBusServer
