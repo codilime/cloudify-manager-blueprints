@@ -24,7 +24,7 @@ RETRIES = 10
 def is_influxdb_responding(url):
     """Check if url responds with a normal influxdb response."""
     try:
-        urllib2.urlopen(influxdb_url).read()
+        urllib2.urlopen(url).read()
     except urllib2.HTTPError as e:
         # influxdb normally responds with a 404 on GET to /
         if e.code != 404:
