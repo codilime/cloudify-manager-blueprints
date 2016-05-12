@@ -669,6 +669,13 @@ node_types:
             script_path:
               default: components/restservice/scripts/stop.py
             fabric_env: *simple_fabric_env
+      cloudify.interfaces.validation:
+        upgrade:
+          implementation: fabric.fabric_plugin.tasks.run_script
+          inputs:
+            script_path:
+              default: components/restservice/scripts/upgrade_validation.py
+            fabric_env: *simple_fabric_env
 
   manager.nodes.ManagementWorker:
     derived_from: cloudify.nodes.ApplicationModule
