@@ -417,7 +417,7 @@ class SystemD(object):
         systemctl_cmd = ['systemctl', action]
         if service:
             systemctl_cmd.append(service)
-        sudo(systemctl_cmd, retries=retries, ignore_failures=ignore_failure)
+        return sudo(systemctl_cmd, retries=retries, ignore_failures=ignore_failure)
 
     def configure(self, service_name, render=True):
         """This configures systemd for a specific service.
@@ -490,6 +490,11 @@ class SystemD(object):
                                                         append_prefix)
         self.systemctl('restart', full_service_name, retries,
                        ignore_failure=ignore_failure)
+
+    def is_alive(self, service_name, append_prefix=True):
+        service_name = self._get_full_service_name(service_name, append_prefix)
+        result = self.systemctl('status', service_name, ignore_failure=True)
+        return result.returncode == 0
 
     @staticmethod
     def _get_full_service_name(service_name, append_prefix):
@@ -814,6 +819,7 @@ class CtxPropertyFactory(object):
                             service_name,
                             self.ROLLBACK_NODE_PROPS_DIR_NAME)
 
+<<<<<<< HEAD
     def _get_install_properties(self, service_name):
         install_props_file = self._get_rollback_props_file_path(service_name)
         with open(install_props_file) as f:
@@ -1157,3 +1163,28 @@ def _set_upgrade_data(**kwargs):
 def _get_upgrade_data():
     with open(UPGRADE_METADATA_FILE) as f:
         return json.load(f)
+
+
+def upgrade_validation_directories(service_name):
+    try:
+        ctx_factory.get_install_properties(service_name)
+    except IOError:
+        raise RuntimeError('Service {} has no properties file'.format(
+            service_name))
+
+    if os.path.exists(
+            ctx_factory._get_rollback_properties_dir(service_name)):
+        raise RuntimeError('Rollback properties directory exists for service {}'
+                           .format(service_name))
+
+    if not os.path.exists(
+            resource_factory._get_resources_dir(
+                service_name)):
+        raise RuntimeError('Resources directory does not exist for service {}'
+                           .format(service_name))
+
+    if os.path.exists(
+            resource_factory._get_rollback_resources_dir(
+                service_name)):
+        raise RuntimeError('Rollback resources directory exists for service {}'
+                           .format(service_name))
