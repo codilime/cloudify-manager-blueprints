@@ -1188,3 +1188,13 @@ def upgrade_validation_directories(service_name):
                 service_name)):
         raise RuntimeError('Rollback resources directory exists for service {}'
                            .format(service_name))
+
+
+def parse_jvm_heap_size(heap_size):
+    if heap_size.endswith('g'):
+        multiplier = 10**3
+    elif heap_size.endswith('m'):
+        multiplier = 1
+    else:
+        raise ValueError(heap_size)
+    return int(heap_size[:-1]) * multiplier

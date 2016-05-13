@@ -3,8 +3,15 @@
 import urllib2
 import platform
 import subprocess
+from os.path import join, dirname
 
 from cloudify import ctx
+
+ctx.download_resource(
+    join('components', 'utils.py'),
+    join(dirname(__file__), 'utils.py'))
+
+import utils # NOQA
 
 
 def _error(message):
@@ -71,16 +78,13 @@ def _validate_es_heap_size(es_heap_size, allowed_gap_in_mb):
     The allowed gap is the memory we require to be available for all other
     services.
     """
-    if es_heap_size.endswith('g'):
-        multiplier = 10**3
-    elif es_heap_size.endswith('m'):
-        multiplier = 1
-    else:
+    try:
+        es_heap_size_in_mb = utils.parse_jvm_heap_size(es_heap_size)
+    except ValueError:
         return _error(
             'elasticsearch_heap_size input is invalid. '
             'The input size can be one of `Xm` or `Xg` formats. '
             'Provided: {0}'.format(es_heap_size))
-    es_heap_size_in_mb = int(es_heap_size[:-1]) * multiplier
 
     current_memory = _get_host_total_memory()
     available_memory_for_heap = \
