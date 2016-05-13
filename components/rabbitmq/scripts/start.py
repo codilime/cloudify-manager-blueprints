@@ -97,17 +97,4 @@ if not rabbitmq_endpoint_ip:
 
     utils.systemd.verify_alive(RABBITMQ_SERVICE_NAME)
 
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-try:
-    sock.connect((rabbitmq_endpoint_ip, PORT))
-except socket.error as e:
-    ctx.logger.error(
-        'RabbitMQ was not listening on {}:{}: {}'.format(rabbitmq_endpoint_ip,
-                                                         PORT, e))
-else:
-    ctx.logger.info(
-        'RabbitMQ was listening on {}:{}'.format(rabbitmq_endpoint_ip, PORT))
-    sock.shutdown(socket.SHUT_RDWR)
-finally:
-    sock.close()
+utils.verify_port_open(RABBITMQ_SERVICE_NAME, PORT, host=rabbitmq_endpoint_ip)

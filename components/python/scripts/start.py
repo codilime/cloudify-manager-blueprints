@@ -11,7 +11,6 @@ import utils  # NOQA
 
 
 pip_result = utils.sudo(['pip'], ignore_failures=True)
-if pip_result.returncode == 0:
-    ctx.logger.info('pip was installed correctly')
-else:
-    ctx.logger.error('pip was not installed')
+if pip_result.returncode != 0:
+    ctx.abort_operation('Python runtime installation error: '
+                        'pip was not installed')

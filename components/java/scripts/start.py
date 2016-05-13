@@ -11,7 +11,5 @@ import utils  # NOQA
 
 
 java_result = utils.sudo(['java', '-version'], ignore_failures=True)
-if java_result.returncode == 0:
-    ctx.logger.info('java was installed correctly')
-else:
-    ctx.logger.error('java was not installed')
+if java_result.returncode != 0:
+    ctx.abort_operatoin('Java runtime error: java was not installed')
