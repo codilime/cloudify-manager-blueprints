@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import subprocess
 from os.path import join, dirname
 
 from cloudify import ctx
@@ -16,17 +17,15 @@ ctx_properties = utils.ctx_factory.get_install_properties(
     MGMT_WORKER_SERVICE_NAME)
 
 
-@utils.retry(ValueError)
-def is_worker_running(amqp_url):
+@utils.retry(subprocess.CalledProcessError)
+def check_worker_running(amqp_url):
     """Use `celery status` to check if the worker is running."""
-    resp = utils.sudo([
+    return utils.sudo([
         CELERY_PATH,
         '-b', celery_amqp_url,
         '--app=cloudify_agent.app.app',
         'status'
-    ], ignore_failures=True)
-    if resp.returncode != 0:
-        raise ValueError('Celery worker is not running')
+    ])
 
 
 ctx.logger.info('Starting Management Worker Service...')
@@ -38,7 +37,4 @@ celery_amqp_url = ('amqp://{rabbitmq_username}:{rabbitmq_password}@'
                    '{rabbitmq_endpoint_ip}:{port}//').format(
     port=5672, **ctx_properties)
 
-try:
-    is_worker_running(celery_amqp_url)
-except ValueError as e:
-    ctx.abort_operation(e.message)
+check_worker_running(celery_amqp_url)
