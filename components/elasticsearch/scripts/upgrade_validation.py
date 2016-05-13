@@ -14,8 +14,6 @@ import utils  # NOQA
 
 ES_SERVICE_NAME = 'elasticsearch'
 
-utils.upgrade_validation_directories(ES_SERVICE_NAME)
-
 install_properties = utils.ctx_factory.get_install_properties(
     ES_SERVICE_NAME)
 upgrade_properties = utils.ctx_factory._load_ctx_properties(
@@ -55,6 +53,7 @@ def verify_elasticsearch_running(url):
 
 elasticsearch_url = 'http://{0}:9200'.format(ES_ENDPOINT_IP)
 
+utils.upgrade_validation_directories(ES_SERVICE_NAME)
 utils.systemd.verify_alive(ES_SERVICE_NAME, append_prefix=False)
 verify_properties(install_properties, upgrade_properties)
 verify_elasticsearch_running(elasticsearch_url)

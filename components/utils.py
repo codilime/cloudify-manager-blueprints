@@ -417,7 +417,8 @@ class SystemD(object):
         systemctl_cmd = ['systemctl', action]
         if service:
             systemctl_cmd.append(service)
-        return sudo(systemctl_cmd, retries=retries, ignore_failures=ignore_failure)
+        return sudo(systemctl_cmd, retries=retries,
+                    ignore_failures=ignore_failure)
 
     def configure(self, service_name, render=True):
         """This configures systemd for a specific service.
@@ -1169,25 +1170,25 @@ def upgrade_validation_directories(service_name):
     try:
         ctx_factory.get_install_properties(service_name)
     except IOError:
-        raise RuntimeError('Service {} has no properties file'.format(
+        ctx.abort_operation('Service {0} has no properties file'.format(
             service_name))
 
     if os.path.exists(
             ctx_factory._get_rollback_properties_dir(service_name)):
-        raise RuntimeError('Rollback properties directory exists for service {}'
-                           .format(service_name))
+        ctx.abort_operation('Rollback properties directory exists for '
+                            'service {0}'.format(service_name))
 
     if not os.path.exists(
             resource_factory._get_resources_dir(
                 service_name)):
-        raise RuntimeError('Resources directory does not exist for service {}'
-                           .format(service_name))
+        ctx.abort_operation('Resources directory does not exist for '
+                            'service {0}'.format(service_name))
 
     if os.path.exists(
             resource_factory._get_rollback_resources_dir(
                 service_name)):
-        raise RuntimeError('Rollback resources directory exists for service {}'
-                           .format(service_name))
+        ctx.abort_operation('Rollback resources directory exists for '
+                            'service {0}'.format(service_name))
 
 
 def parse_jvm_heap_size(heap_size):

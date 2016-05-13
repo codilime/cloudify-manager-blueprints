@@ -11,7 +11,7 @@ ctx.download_resource(
     join('components', 'utils.py'),
     join(dirname(__file__), 'utils.py'))
 
-import utils # NOQA
+import utils  # NOQA
 
 
 def _error(message):

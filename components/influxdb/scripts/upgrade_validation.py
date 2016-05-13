@@ -14,5 +14,5 @@ INFLUX_SERVICE_NAME = 'influxdb'
 utils.upgrade_validation_directories(INFLUX_SERVICE_NAME)
 
 if not utils.systemd.is_alive(INFLUX_SERVICE_NAME):
-    raise RuntimeError('InfluxDB service must be running to allow data '
-                       'migration')
+    ctx.abort_operation('InfluxDB service must be running to allow data '
+                        'migration')

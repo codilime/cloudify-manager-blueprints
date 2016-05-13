@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from os.path import join, dirname, exists
+from os.path import join, dirname
 from cloudify import ctx
 ctx.download_resource(
     join('components', 'utils.py'),
@@ -15,7 +15,6 @@ install_properties = utils.ctx_factory.get_install_properties(
 upgrade_properties = utils.ctx_factory._load_ctx_properties(
     RABBITMQ_SERVICE_NAME)
 
-# these properties must not change in an upgrade
 IMMUTABLE_PROPERTIES = [
     'rabbitmq_username',
     'rabbitmq_pasword',
@@ -24,33 +23,26 @@ IMMUTABLE_PROPERTIES = [
     'broker_cert_path'
 ]
 
-changed = []
-for property_name in IMMUTABLE_PROPERTIES:
-    original_property = install_properties.get(property_name)
-    upgrade_property = upgrade_properties.get(property_name)
 
-    if original_property != upgrade_property:
-        changed.append(property_name)
+def verify_properties(install_properties, upgrade_properties):
+    """Compare node properties and decide if upgrading is allowed.
 
-if changed:
-    raise RuntimeError(
-        'RabbitMQ properties must not change during a manager '
-        'upgrade! Changed properties: {}'.format(', '.join(changed)))
+    When upgrading the manager, some RabbitMQ inputs must remain the same
+    because the running node instances might be using them.
+    """
+    changed = []
+    for property_name in IMMUTABLE_PROPERTIES:
+        original_property = install_properties.get(property_name)
+        upgrade_property = upgrade_properties.get(property_name)
 
-if exists(
-        utils.ctx_factory._get_rollback_properties_dir(RABBITMQ_SERVICE_NAME)):
-    raise RuntimeError('Rollback properties directory exists for service {}'
-                       .format(RABBITMQ_SERVICE_NAME))
+        if original_property != upgrade_property:
+            changed.append(property_name)
 
-if exists(
-        utils.resource_factory._get_rollback_resources_dir(
-            RABBITMQ_SERVICE_NAME)):
-    raise RuntimeError('Rollback resources directory exists for service {}'
-                       .format(RABBITMQ_SERVICE_NAME))
+    if changed:
+        ctx.abort_operation(
+            'RabbitMQ properties must not change during a manager '
+            'upgrade! Changed properties: {0}'.format(', '.join(changed)))
 
 
-if not exists(
-        utils.resource_factory._get_resources_dir(
-            RABBITMQ_SERVICE_NAME)):
-    raise RuntimeError('Resources directory does not exist for service {}'
-                       .format(RABBITMQ_SERVICE_NAME))
+utils.upgrade_validation_directories(RABBITMQ_SERVICE_NAME)
+verify_properties(install_properties, upgrade_properties)
