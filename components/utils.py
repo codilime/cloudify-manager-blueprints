@@ -496,6 +496,12 @@ class SystemD(object):
         result = self.systemctl('status', service_name, ignore_failure=True)
         return result.returncode == 0
 
+    def verify_alive(self, service_name, append_prefix=True):
+        if self.is_alive(service_name, append_prefix):
+            ctx.logger.info('{0} is running'.format(service_name))
+        else:
+            ctx.abort_operation('{0} is not running'.format(service_name))
+
     @staticmethod
     def _get_full_service_name(service_name, append_prefix):
         if append_prefix:
@@ -1162,3 +1168,11 @@ def _set_upgrade_data(**kwargs):
 def _get_upgrade_data():
     with open(UPGRADE_METADATA_FILE) as f:
         return json.load(f)
+
+
+@retry((IOError, ValueError))
+def verify_http(url, predicate=None):
+    response = urllib.urlopen(url)
+    if predicate is not None and not predicate(response):
+        raise ValueError(response)
+    return True
