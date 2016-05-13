@@ -287,6 +287,12 @@ def copy_notice(service):
     copy(resource_file, dest)
 
 
+def is_port_open(port, host='localhost'):
+    """Try to connect to (host, port), return if the port was listening."""
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    return sock.connect_ex((host, port)) == 0
+
+
 def wait_for_port(port, host='localhost'):
     """Helper function to wait for a port to open before continuing"""
     counter = 1
@@ -295,9 +301,7 @@ def wait_for_port(port, host='localhost'):
         host, port))
 
     for tries in range(24):
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        result = sock.connect_ex((host, port))
-        if not result == 0:
+        if not is_port_open(port, host=host):
             ctx.logger.info('{0}:{1} is not available yet, '
                             'retrying... ({2}/24)'.format(host, port, counter))
             time.sleep(2)
@@ -1171,8 +1175,22 @@ def _get_upgrade_data():
 
 
 @retry((IOError, ValueError))
-def verify_http(url, predicate=None):
+def check_http_response(url, predicate):
     response = urllib.urlopen(url)
     if predicate is not None and not predicate(response):
         raise ValueError(response)
-    return True
+    return response
+
+
+def verify_service_http(service_name, url, predicate=None):
+    try:
+        return check_http_response(url, predicate)
+    except (IOError, ValueError) as e:
+        ctx.abort_operation('{0} error: {1}: {2}'.format(service_name, url, e))
+        raise
+
+
+def verify_port_open(service_name, port, host='localhost'):
+    if not is_port_open(port, host):
+        ctx.abort_operation('{0} error: port {1}:{2} was not open'
+                            .format(service_name, host, port))
