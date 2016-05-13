@@ -8,9 +8,10 @@ import time
 import glob
 import json
 import shlex
-import urllib
+import base64
 import socket
 import base64
+import urllib
 import urllib2
 import hashlib
 import tempfile
@@ -1194,3 +1195,9 @@ def verify_port_open(service_name, port, host='localhost'):
     if not is_port_open(port, host):
         ctx.abort_operation('{0} error: port {1}:{2} was not open'
                             .format(service_name, host, port))
+
+
+def basic_auth_header(username, password):
+    encoded_credentials = base64.encodestring('{0}:{1}'.format(
+        username, password))[:-1]
+    return "Basic {0}".format(encoded_credentials)
