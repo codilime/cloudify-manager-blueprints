@@ -2,8 +2,8 @@
 
 import time
 import json
+import subprocess
 from os.path import join, dirname
-import socket
 
 from cloudify import ctx
 
@@ -13,11 +13,18 @@ ctx.download_resource(
 import utils  # NOQA
 
 RABBITMQ_SERVICE_NAME = 'rabbitmq'
-PORT = 5672
-
 ctx_properties = utils.ctx_factory.get(RABBITMQ_SERVICE_NAME)
-
 rabbitmq_endpoint_ip = ctx_properties['rabbitmq_endpoint_ip']
+PORT = 5671 if ctx_properties['rabbitmq_ssl_enabled'] else 5672
+
+
+@utils.retry(subprocess.CalledProcessError)
+def check_rabbit_running():
+    """Use rabbitmqctl status to check if RabbitMQ is working.
+
+    Sometimes rabbit takes a while to start, so this is retried several times.
+    """
+    return utils.sudo(['rabbitmqctl', 'status'])
 
 
 def set_rabbitmq_policy(name, expression, policy):
@@ -98,3 +105,4 @@ if not rabbitmq_endpoint_ip:
     utils.systemd.verify_alive(RABBITMQ_SERVICE_NAME)
 
 utils.verify_port_open(RABBITMQ_SERVICE_NAME, PORT, host=rabbitmq_endpoint_ip)
+check_rabbit_running()
