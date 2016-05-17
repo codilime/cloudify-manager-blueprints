@@ -15,21 +15,22 @@ REST_SERVICE_NAME = 'restservice'
 REST_SERVICE_HOME = '/opt/manager'
 
 # this is currently hardcoded in userstore.yaml
-REST_CREDENTIALS = ('admin', 'admin')
+REST_USERNAME = 'admin'
+REST_PASSWORD = 'admin'
 
 
-def verify_restservice(url, credentials=None):
+def verify_restservice(url, username='', password=''):
     """To verify that the REST service is working, GET the blueprints list.
 
     There's nothing special about the blueprints endpoint, it's simply one
     that also requires the storage backend to be up, so if it works, there's
     a good chance everything is configured correctly.
     """
-    blueprints_url = urlparse.urljoin(url, 'api/v2/blueprints')
+    blueprints_url = urlparse.urljoin(url, 'api/v2.1/blueprints')
     req = urllib2.Request(blueprints_url)
 
-    if credentials:
-        auth_header = utils.basic_auth_header(*credentials)
+    if username or password:
+        auth_header = utils.basic_auth_header(username, password)
         req.add_header('Authorization', auth_header)
 
     try:
@@ -47,4 +48,5 @@ utils.systemd.verify_alive(REST_SERVICE_NAME)
 
 restservice_url = 'http://{0}:{1}'.format('127.0.0.1', 8100)
 utils.verify_service_http(REST_SERVICE_NAME, restservice_url)
-verify_restservice(restservice_url, credentials=REST_CREDENTIALS)
+verify_restservice(restservice_url, username=REST_USERNAME,
+                   password=REST_PASSWORD)
