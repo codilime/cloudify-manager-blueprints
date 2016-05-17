@@ -35,7 +35,7 @@ if not INFLUXDB_ENDPOINT_IP:
 
     utils.systemd.verify_alive(INFLUX_SERVICE_NAME)
 
-influxdb_url = 'http://{}:{}'.format(
+influxdb_url = 'http://{0}:{1}'.format(
     INFLUXDB_ENDPOINT_IP, INFLUXDB_ENDPOINT_PORT)
 
 

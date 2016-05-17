@@ -20,7 +20,7 @@ ctx_properties = utils.ctx_factory.get_install_properties(
 @utils.retry(subprocess.CalledProcessError)
 def check_worker_running(amqp_url):
     """Use `celery status` to check if the worker is running."""
-    return utils.sudo([
+    utils.sudo([
         CELERY_PATH,
         '-b', celery_amqp_url,
         '--app=cloudify_agent.app.app',

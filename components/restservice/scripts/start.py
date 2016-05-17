@@ -28,7 +28,7 @@ def verify_restservice(url, credentials=None):
     blueprints_url = urlparse.urljoin(url, 'api/v2/blueprints')
     req = urllib2.Request(blueprints_url)
 
-    if credentials is not None:
+    if credentials:
         auth_header = utils.basic_auth_header(*credentials)
         req.add_header('Authorization', auth_header)
 
@@ -45,6 +45,6 @@ utils.start_service(REST_SERVICE_NAME)
 
 utils.systemd.verify_alive(REST_SERVICE_NAME)
 
-restservice_url = 'http://{}:{}'.format('127.0.0.1', 8100)
+restservice_url = 'http://{0}:{1}'.format('127.0.0.1', 8100)
 utils.verify_service_http(REST_SERVICE_NAME, restservice_url)
 verify_restservice(restservice_url, credentials=REST_CREDENTIALS)
