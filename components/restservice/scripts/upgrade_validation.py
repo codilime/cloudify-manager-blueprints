@@ -12,7 +12,8 @@ REST_SERVICE_NAME = 'restservice'
 
 utils.upgrade_validation_directories(REST_SERVICE_NAME)
 
-install_properties = utils.ctx_factory.get_install_properties(
-    REST_SERVICE_NAME)
-upgrade_properties = utils.ctx_factory._load_ctx_properties(
-    REST_SERVICE_NAME)
+install_properties = utils.ctx_factory.get(REST_SERVICE_NAME,
+                                           upgrade_props=False)
+
+upgrade_properties = utils.ctx_factory.get(REST_SERVICE_NAME)
+ctx.logger.info('elo {}'.format(upgrade_properties))

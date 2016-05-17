@@ -14,10 +14,10 @@ import utils  # NOQA
 
 ES_SERVICE_NAME = 'elasticsearch'
 
-install_properties = utils.ctx_factory.get_install_properties(
-    ES_SERVICE_NAME)
-upgrade_properties = utils.ctx_factory._load_ctx_properties(
-    ES_SERVICE_NAME)
+install_properties = utils.ctx_factory.get(ES_SERVICE_NAME,
+                                           upgrade_props=False)
+
+upgrade_properties = utils.ctx_factory.get(ES_SERVICE_NAME)
 
 ES_ENDPOINT_IP = install_properties['es_endpoint_ip']
 if not ES_ENDPOINT_IP:

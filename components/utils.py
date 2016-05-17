@@ -826,7 +826,6 @@ class CtxPropertyFactory(object):
                             service_name,
                             self.ROLLBACK_NODE_PROPS_DIR_NAME)
 
-<<<<<<< HEAD
     def _get_install_properties(self, service_name):
         install_props_file = self._get_rollback_props_file_path(service_name)
         with open(install_props_file) as f:
