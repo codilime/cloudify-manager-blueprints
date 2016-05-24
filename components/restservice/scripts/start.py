@@ -32,6 +32,9 @@ def verify_restservice(url):
         # is safe to perform in maintenance mode, so let's bypass the check
         headers.update(utils.create_maintenance_headers())
 
+    ctx.logger.info('Requesting {0} with {1} ({2})'.format(
+        blueprints_url, headers, utils.is_upgrade))
+
     req = urllib2.Request(blueprints_url, headers=headers)
 
     try:
