@@ -1104,7 +1104,7 @@ def _list_executions_with_retries(headers, execution_id, retries=6):
     ctx.abort_operation(err)
 
 
-def _create_maintenance_headers(upgrade_props=True):
+def create_maintenance_headers(upgrade_props=True):
     headers = {'X-BYPASS-MAINTENANCE': 'True'}
     auth_props = get_auth_headers(upgrade_props)
     headers.update(auth_props)
@@ -1136,7 +1136,7 @@ def create_upgrade_snapshot():
     url = 'http://localhost/api/v2.1/snapshots/{0}'.format(snapshot_id)
     data = json.dumps({'include_metrics': 'true',
                        'include_credentials': 'true'})
-    headers = _create_maintenance_headers(upgrade_props=False)
+    headers = create_maintenance_headers(upgrade_props=False)
     req_headers = headers.copy()
     req_headers.update({'Content-Type': 'application/json'})
     ctx.logger.info('Creating snapshot with ID {0}'
@@ -1161,7 +1161,7 @@ def restore_upgrade_snapshot():
     url = 'http://localhost/api/v2.1/snapshots/{0}/restore'.format(snapshot_id)
     data = json.dumps({'recreate_deployments_envs': 'false',
                        'force': 'true'})
-    headers = _create_maintenance_headers(upgrade_props=True)
+    headers = create_maintenance_headers(upgrade_props=True)
     req_headers = headers.copy()
     req_headers.update({'Content-Type': 'application/json'})
     ctx.logger.info('Restoring snapshot with ID {0}'.format(snapshot_id))

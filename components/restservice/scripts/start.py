@@ -24,11 +24,15 @@ def verify_restservice(url):
     a good chance everything is configured correctly.
     """
     blueprints_url = urlparse.urljoin(url, 'api/v2.1/blueprints')
-    req = urllib2.Request(blueprints_url)
 
-    auth_headers = utils.get_auth_headers(True)
-    if 'Authorization' in auth_headers:
-        req.add_header('Authorization', auth_headers['Authorization'])
+    headers = utils.get_auth_headers(True)
+
+    if utils.is_upgrade:
+        # if we're doing an upgrade, we're in maintenance mode - this request
+        # is safe to perform in maintenance mode, so let's bypass the check
+        headers.update(utils.create_maintenance_headers())
+
+    req = urllib2.Request(blueprints_url, headers=headers)
 
     try:
         response = urllib2.urlopen(req)
