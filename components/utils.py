@@ -1214,15 +1214,16 @@ def _get_upgrade_data():
 
 
 @retry((IOError, ValueError))
-def check_http_response(url, predicate):
-    response = urllib.urlopen(url)
+def check_http_response(url, predicate=None, **request_kwargs):
+    req = urllib2.Request(url, **request_kwargs)
+    response = urllib2.urlopen(req)
     if predicate is not None and not predicate(response):
         raise ValueError(response)
     return response
 
 
-def verify_service_http(service_name, url, predicate=None):
+def verify_service_http(service_name, *args, **kwargs):
     try:
-        return check_http_response(url, predicate)
+        return check_http_response(*args, **kwargs)
     except (IOError, ValueError) as e:
         ctx.abort_operation('{0} error: {1}: {2}'.format(service_name, url, e))
