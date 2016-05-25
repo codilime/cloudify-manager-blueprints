@@ -30,7 +30,9 @@ def verify_restservice(url):
     if utils.is_upgrade or utils.is_rollback:
         # if we're doing an upgrade, we're in maintenance mode - this request
         # is safe to perform in maintenance mode, so let's bypass the check
-        headers.update(utils.create_maintenance_headers())
+        headers = utils.create_maintenance_headers()
+    else:
+        headers = utils.get_auth_headers(True)
 
     ctx.logger.info('Requesting {0} with {1} ({2})'.format(
         blueprints_url, headers, utils.is_upgrade))

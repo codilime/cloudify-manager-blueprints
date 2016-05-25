@@ -32,7 +32,7 @@ nginx_url = '{0}://127.0.0.1/api/v2.1/blueprints'.format(
 if utils.is_upgrade or utils.is_rollback:
     headers = utils.create_maintenance_headers()
 else:
-    headers = utils.get_auth_headers(False)
+    headers = utils.get_auth_headers(True)
 
 utils.verify_service_http(NGINX_SERVICE_NAME, nginx_url, check_response,
                           headers=headers)
