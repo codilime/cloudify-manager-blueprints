@@ -27,7 +27,7 @@ def verify_restservice(url):
 
     headers = utils.get_auth_headers(True)
 
-    if utils.is_upgrade:
+    if utils.is_upgrade or utils.is_rollback:
         # if we're doing an upgrade, we're in maintenance mode - this request
         # is safe to perform in maintenance mode, so let's bypass the check
         headers.update(utils.create_maintenance_headers())

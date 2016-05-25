@@ -29,7 +29,7 @@ utils.systemd.verify_alive(NGINX_SERVICE_NAME, append_prefix=False)
 nginx_url = '{0}://127.0.0.1/api/v2.1/blueprints'.format(
     ctx.instance.runtime_properties['rest_protocol'])
 
-if utils.is_upgrade:
+if utils.is_upgrade or utils.is_rollback:
     headers = utils.create_maintenance_headers()
 else:
     headers = utils.get_auth_headers(False)
