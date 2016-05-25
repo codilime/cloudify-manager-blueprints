@@ -25,12 +25,12 @@ def verify_restservice(url):
     """
     blueprints_url = urlparse.urljoin(url, 'api/v2.1/blueprints')
 
-    headers = utils.get_auth_headers(True)
-
     if utils.is_upgrade:
         # if we're doing an upgrade, we're in maintenance mode - this request
         # is safe to perform in maintenance mode, so let's bypass the check
-        headers.update(utils.create_maintenance_headers())
+        headers = utils.create_maintenance_headers()
+    else:
+        headers = utils.get_auth_headers(True)
 
     ctx.logger.info('Requesting {0} with {1} ({2})'.format(
         blueprints_url, headers, utils.is_upgrade))
