@@ -1063,6 +1063,8 @@ def http_request(url, data=None, method='PUT', headers={}):
     request.get_method = lambda: method
     try:
         return urllib2.urlopen(request)
+    except urllib2.HTTPError as e:
+        return e
     except urllib2.URLError as e:
         reqstring = url + (' ' + data if data else '')
         ctx.logger.error('Failed to {0} {1} (reason: {2})'.format(
