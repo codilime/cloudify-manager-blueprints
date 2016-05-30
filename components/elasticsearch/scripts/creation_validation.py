@@ -38,7 +38,7 @@ def verify_elasticsearch_running(url):
     correctly.
     """
     provider_context_url = urlparse.urljoin(url, 'cloudify_storage/'
-                                                 'provider_context/context')
+                                                 'provider_context/CONTEXT')
     try:
         urllib2.urlopen(provider_context_url)
     except urllib2.URLError as e:
