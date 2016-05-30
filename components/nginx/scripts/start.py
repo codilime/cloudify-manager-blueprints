@@ -25,9 +25,7 @@ def check_response(response):
 utils.start_service(NGINX_SERVICE_NAME, append_prefix=False)
 utils.systemd.verify_alive(NGINX_SERVICE_NAME, append_prefix=False)
 
-nginx_url = '{0}://127.0.0.1/api/v2.1/blueprints'.format(
-    ctx.instance.runtime_properties['rest_protocol'])
-
+nginx_url = 'http://127.0.0.1/api/v2.1/blueprints'
 if utils.is_upgrade or utils.is_rollback:
     headers = utils.create_maintenance_headers()
 else:
