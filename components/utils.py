@@ -1090,7 +1090,7 @@ def http_request(url, data=None, method='PUT',
     except urllib2.URLError as e:
         if not should_fail:
             reqstring = url + (' ' + data if data else '')
-            ctx.logger.error('Failed to {0} {1} (reason: {2})'.format(
+            ctx.logger.error('Failed to {0} {1!r} (reason: {2!r})'.format(
                 method, reqstring, e.reason))
 
 
