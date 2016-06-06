@@ -67,6 +67,19 @@ def deploy_manager_sources():
         else:
             ctx.logger.info(
                 'Skipping resources package checksum validation...')
+        utils.download_cloudify_resource(
+            'https://github.com/cloudify-cosmo/cloudify-manager/archive/master.tar.gz',
+            NODE_NAME,
+            destination=os.path.join(
+                utils.CLOUDIFY_SOURCES_PATH,
+                'cloudify-manager-3.4rc1.tar.gz'))
+
+        utils.download_cloudify_resource(
+            'http://repository.cloudifysource.org/org/cloudify3/3.4.0/m5-RELEASE/cloudify-ui-3.4.0-m5-b394.tgz',
+            NODE_NAME,
+            destination=os.path.join(
+                utils.CLOUDIFY_SOURCES_PATH,
+                'cloudify-ui-3.4.0-rc1-b395.tgz'))
 
         utils.untar(
             resources_archive_path,
