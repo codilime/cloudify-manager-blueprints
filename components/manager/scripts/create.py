@@ -71,6 +71,8 @@ def deploy_manager_sources():
             resources_archive_path,
             utils.CLOUDIFY_SOURCES_PATH,
             skip_old_files=True)
+        utils.sudo('cp /opt/cloudify/sources/cloudify-manager-3.4m5.tar.gz /opt/cloudify/sources/manager-resources-3.4m5.tar.gz')
+        utils.sudo('cp /opt/cloudify/sources/cloudify-hello-world-example-3.4m5.tar.gz  /opt/cloudify/sources/hello-world-3.4m5.tar.gz')
 
         def splitext(filename):
             # not using os.path.splitext as it would return .gz instead of
