@@ -229,7 +229,7 @@ def deploy_ssl_cert_and_key(cert_filename, key_filename, cn):
                                   user_resource=True,
                                   load_ctx=False)
     except subprocess.CalledProcessError as e:
-        if "No such file or directory" in e.stderr:
+        if "No such file or directory" in e.stderr or 'Nie ma takiego pliku' in e.stderr:
             # pre-existing cert not found, generating new cert
             ctx.logger.info('Generating SSL certificate "{0}" and SSL private '
                             'key "{1}" for CN "{2}"...'.
