@@ -53,6 +53,10 @@ def _configure_security_properties():
     ssl_enabled = security_config['ssl']['enabled']
     ctx.instance.runtime_properties['security_enabled'] = security_enabled
     ctx.instance.runtime_properties['ssl_enabled'] = ssl_enabled
+    ctx.instance.runtime_properties['agent_rest_cert_path'] = \
+        security_config['agent_rest_cert_path']
+    ctx.instance.runtime_properties['broker_ssl_cert_path'] = \
+        security_config['broker_ssl_cert_path']
 
     if security_enabled and ssl_enabled:
         # manager SSL settings
