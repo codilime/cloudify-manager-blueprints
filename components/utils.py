@@ -178,25 +178,35 @@ def remove(path, ignore_failure=False):
 
 
 def _generate_ssl_cert(cert_filename, key_filename, cn):
+    with tempfile.NamedTemporaryFile(delete=False) as conf_file:
+        conf_file.write("""
+[req]
+req_extensions=v3_req
+distinguished_name = req_distinguished_name
 
-    alt_name = 'IP:{0}'.format(cn)
+[v3_req]
+subjectAltName=IP:{ip}
 
-    fd, conf_file = tempfile.mkstemp()
-    os.close(fd)
-    with open(conf_file, 'w') as f:
-        f.write('subjectAltName={0}\n'
-                'distinguished_name = req_distinguished_name\n'
-                '[ req_distinguished_name ]'
-                'commonName={1}'.format(alt_name, cn))
+[ req_distinguished_name ]
+commonName={ip}
+""".format(ip=cn))
 
-    # building openssl command
-    command_arr = shlex.split('openssl req -x509 -nodes -newkey rsa:2048 '
-                              '-out {0} -keyout {1} -days 3650 -batch '
-                              '-subj \'/CN={2}\' -config {3}'.
-                              format(cert_filename, key_filename, cn,
-                                     conf_file))
-    sudo(command_arr)
-    os.remove(conf_file)
+    csr_filename = '/tmp/csr.pem'
+
+    req_command = shlex.split('openssl req -new -nodes -out {0} '
+                              '-newkey rsa:2048 -keyout {1} -config {2} '
+                              '-subj \'/CN={3}\''.
+                              format(csr_filename, key_filename,
+                                     conf_file.name, cn))
+    sudo(req_command)
+    x509_command = ['openssl', 'x509', '-days', '3650', '-req', '-in',
+                    csr_filename, '-signkey', key_filename, '-out',
+                    cert_filename, '-extensions', 'v3_req', '-extfile',
+                    conf_file.name]
+    sudo(x509_command)
+
+    os.remove(conf_file.name)
+    sudo(['rm', csr_filename])
 
 
 def deploy_ssl_cert_and_key(cert_filename, key_filename, cn):
@@ -233,7 +243,7 @@ def deploy_ssl_cert_and_key(cert_filename, key_filename, cn):
                                   load_ctx=False)
     except subprocess.CalledProcessError as e:
         if "No such file or directory" in e.stderr:
-            # pre-existing cert not found, generating new cert
+            pre-existing cert not found, generating new cert
             ctx.logger.info('Generating SSL certificate "{0}" and SSL private '
                             'key "{1}" for CN "{2}"...'.
                             format(cert_filename, key_filename, cn))
